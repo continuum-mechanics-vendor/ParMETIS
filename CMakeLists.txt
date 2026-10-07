@@ -19,24 +19,22 @@ add_compile_definitions(
 )
 
 find_package(METIS REQUIRED)
+find_package(GKlib REQUIRED)
 find_package(MPI REQUIRED)
 
 add_library(parmetis)
 target_include_directories(parmetis PUBLIC
-  "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include;${PROJECT_SOURCE_DIR}/libparmetis;${metis_BINARY_DIR}>"
+  "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include;${PROJECT_SOURCE_DIR}/libparmetis>"
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
-target_link_libraries(parmetis PRIVATE MPI::MPI_C METIS::METIS)
-
-if(SHARED)
-  target_link_libraries(parmetis PRIVATE metis GKlib)
-endif()
+target_link_libraries(parmetis PUBLIC MPI::MPI_C METIS::METIS GKlib::GKlib)
 
 add_library(PARMETIS::PARMETIS ALIAS parmetis)
 
 install(TARGETS parmetis EXPORT ${PROJECT_NAME}-targets)
 
 add_subdirectory(libparmetis)
+
 if(PARMETIS_BUILD_PROGRAMS)
   add_subdirectory(programs)
 endif()
